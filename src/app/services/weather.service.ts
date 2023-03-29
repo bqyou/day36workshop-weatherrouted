@@ -32,16 +32,6 @@ export class WeatherService {
                     .set('appid', apiKey)
     return lastValueFrom(this.httpClient.get
               ('https://api.openweathermap.org/data/2.5/weather', {params: params}))
-  }
-
-  addCity(city: City){
-    this.countries.push({country: city.country, city: city.city})
-    this.countries.sort((a,b) => (a.country > b.country)?1:-1)
-    this.imageBasedCity.push({city: city.city, imageUrl: city.imageUrl})    
-  }
-
-  getCityUrl(city: String){
-    const w = this.imageBasedCity.find(v => v.city == city)
-    return w
-  }
+  } 
+  
 }

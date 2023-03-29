@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { City } from '../model/city';
+import { CitiesRepository } from '../services/cities.repo';
 import { WeatherService } from '../services/weather.service';
 
 @Component({
@@ -11,10 +12,10 @@ export class ListcityComponent implements OnInit {
 
   cities: any;
 
-  constructor(private weatherSvc: WeatherService){}
+  constructor(private citiesRepo: CitiesRepository){}
 
-  ngOnInit(): void {
-      this.cities = this.weatherSvc.countries;
+  async ngOnInit() {
+      this.cities = await this.citiesRepo.getAllCities();
   }
 
 

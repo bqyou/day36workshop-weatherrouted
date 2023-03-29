@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Weather } from '../model/weather';
+import { CitiesRepository } from '../services/cities.repo';
 import { WeatherService } from '../services/weather.service';
 
 @Component({
@@ -16,10 +17,10 @@ export class WeatherdetailsComponent implements OnInit, OnDestroy {
   private country?: string;
   private imageUrl?: string;
   params$ ! : Subscription;
-  model = new Weather("Singapore", 0,0,0,"", 0,0);
+  model = new Weather("Singapore", 0,0,0,"","", 0,0);
 
   constructor(private weatherSvc: WeatherService, private router:Router,
-      private activatedRoute: ActivatedRoute)
+      private activatedRoute: ActivatedRoute, private citiesRepo: CitiesRepository)
   {}
 
   ngOnInit(): void {
@@ -37,15 +38,16 @@ export class WeatherdetailsComponent implements OnInit, OnDestroy {
 
   getWeatherFromAPI(city: string){
     this.weatherSvc.getWeather(city, this.OPENWEATHER_API_KEY)
-      .then((result) => {  
-        const cityObj = this.weatherSvc.getCityUrl(city);
-        console.log(cityObj?.imageUrl);
+      .then(async (result) => {  
+        const cityImageUrl = await this.citiesRepo.getCityImageUrl(city);
+        console.log(cityImageUrl);
         this.model = new Weather(
           city,
           ('main' in result) ? (result.main as { temp: number }).temp : 0,
           ('main' in result) ? (result.main as { pressure: number }).pressure : 0,
           ('main' in result) ? (result.main as { humidity: number }).humidity : 0,
           ('weather' in result) ? (result.weather as { description: string }[])[0].description : '',
+          cityImageUrl,
           ('wind' in result) ? (result.wind as { degree: number }).degree : 0,
           ('wind' in result) ? (result.wind as { speed: number }).speed : 0,
         )
